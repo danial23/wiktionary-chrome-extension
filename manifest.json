@@ -1,0 +1,16 @@
+{
+  "manifest_version": 3,
+  "name": "Wiktionary",
+  "description": "Search words on Wiktionary",
+  "version": "0.1",
+  "content_scripts": [
+    {
+      "matches": ["*://*/*"],
+      "js": ["define-selected-word.js"]
+    }
+  ],
+  "side_panel": {
+    "default_path": "sidepanel.html"
+  },
+  "permissions": ["sidePanel"]
+}
