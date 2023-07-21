@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Wiktionary",
   "description": "Search words on Wiktionary",
-  "version": "0.1",
+  "version": "0.1.0",
   "icons": {
     "16": "icon/icon16.png",
     "32": "icon/icon32.png",
