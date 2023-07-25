@@ -3,6 +3,7 @@
   "name": "Wiktionary",
   "description": "Search words on Wiktionary",
   "version": "0.1.1",
+  "minimum_chrome_version": "116",
   "icons": {
     "16": "icon/icon16.png",
     "32": "icon/icon32.png",
