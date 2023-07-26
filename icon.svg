@@ -8,10 +8,10 @@
    version="1.1"
    id="svg5"
    inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
-   sodipodi:docname="logo.svg"
-   inkscape:export-filename="icon128.png"
-   inkscape:export-xdpi="24"
-   inkscape:export-ydpi="24"
+   sodipodi:docname="icon.svg"
+   inkscape:export-filename="icon48.png"
+   inkscape:export-xdpi="9"
+   inkscape:export-ydpi="9"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
@@ -28,8 +28,8 @@
      inkscape:document-units="px"
      showgrid="false"
      inkscape:zoom="0.96289062"
-     inkscape:cx="270.02029"
-     inkscape:cy="266.3854"
+     inkscape:cx="271.05882"
+     inkscape:cy="268.46248"
      inkscape:current-layer="layer1" />
   <defs
      id="defs2">
@@ -65,11 +65,11 @@
     <rect
        style="fill:#ffccaa;fill-opacity:1;stroke:#ffffff;stroke-width:0;stroke-linecap:round;stroke-miterlimit:0;stroke-dasharray:none;stroke-opacity:0.99153"
        id="rect111"
-       width="512"
-       height="512"
-       x="0"
-       y="0"
-       ry="122.22312"
+       width="448"
+       height="448"
+       x="32"
+       y="32"
+       ry="106.94523"
        rx="0" />
     <text
        xml:space="preserve"
@@ -77,29 +77,30 @@
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:341.333px;font-family:Garamond;-inkscape-font-specification:'Garamond, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect2051);display:inline;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0;stroke-linecap:round;stroke-miterlimit:0;stroke-dasharray:none;stroke-opacity:0.99153"
        x="19.306681"
        y="0"
-       transform="translate(-0.18131566,-69.906634)"><tspan
+       transform="matrix(0.875,0,0,0.875,31.841349,-29.168304)"><tspan
          x="105.68146"
          y="317.90394"
-         id="tspan138">W</tspan></text>
+         id="tspan192">W</tspan></text>
     <text
        xml:space="preserve"
        id="text2317"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:341.333px;font-family:Garamond;-inkscape-font-specification:'Garamond, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect2319);display:inline;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0;stroke-linecap:round;stroke-miterlimit:0;stroke-dasharray:none;stroke-opacity:0.99153" />
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:341.333px;font-family:Garamond;-inkscape-font-specification:'Garamond, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect2319);display:inline;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0;stroke-linecap:round;stroke-miterlimit:0;stroke-dasharray:none;stroke-opacity:0.99153"
+       transform="matrix(0.875,0,0,0.875,32,32)" />
     <text
        xml:space="preserve"
        id="text2323"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:341.333px;font-family:'Noto Nastaliq Urdu';-inkscape-font-specification:'Noto Nastaliq Urdu, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect2325);display:inline;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0;stroke-linecap:round;stroke-miterlimit:0;stroke-dasharray:none;stroke-opacity:0.99153"
-       transform="translate(118.73023,148.40163)"><tspan
+       transform="matrix(0.875,0,0,0.875,135.88895,161.85143)"><tspan
          x="328.02142"
          y="302.62584"
-         id="tspan140">و</tspan></text>
+         id="tspan194">و</tspan></text>
     <text
        xml:space="preserve"
        id="text2329"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:341.333px;font-family:'Noto Serif Ethiopic';-inkscape-font-specification:'Noto Serif Ethiopic, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;white-space:pre;shape-inside:url(#rect2331);display:inline;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0;stroke-linecap:round;stroke-miterlimit:0;stroke-dasharray:none;stroke-opacity:0.99153"
-       transform="translate(-101.0142,221.84616)"><tspan
+       transform="matrix(0.875,0,0,0.875,-56.387425,226.11539)"><tspan
          x="130.73091"
          y="310.57043"
-         id="tspan142">ወ</tspan></text>
+         id="tspan196">ወ</tspan></text>
   </g>
 </svg>
