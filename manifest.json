@@ -16,7 +16,8 @@
   "content_scripts": [
     {
       "matches": ["*://*/*"],
-      "js": ["define-selected-word.js"]
+      "js": ["define-selected-word.js"],
+      "css": ["wiktionary-popup.css"]
     }
   ],
   "side_panel": {

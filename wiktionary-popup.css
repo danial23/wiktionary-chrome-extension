@@ -1,0 +1,108 @@
+#wiktionary-popup {
+  all: initial;
+  font-family: Georgia, serif;
+  font-size: 12pt;
+  position: absolute;
+  display: block;
+  z-index: 2147483647;
+  width: 320px;
+  height: 240px;
+  overflow: auto;
+  color: black;
+  background-color: white;
+  padding: 0.5em;
+  border: double;
+}
+
+#wiktionary-popup::-webkit-scrollbar {
+  all: initial;
+}
+
+#wiktionary-popup-container {
+  all: unset;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  color: black;
+  background-color: white;
+  padding: 0;
+  border: none;
+}
+#wiktionary-popup-usage-container {
+  all: unset;
+  font-size: 12pt;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  color: black;
+  background-color: white;
+  padding: 0;
+  border: none;
+}
+#wiktionary-popup-entry {
+  all: unset;
+  display: block;
+  font-size: 16pt;
+  margin-top: 0;
+  margin-bottom: 0.5em;
+  font-weight: bold;
+}
+#wiktionary-popup-partOfSpeech {
+  display: inline;
+  white-space: pre-wrap;
+  font-size: 12pt;
+  color: black;
+  font-weight: bold;
+  font-style: normal;
+}
+#wiktionary-popup-language {
+  display: inline;
+  float: right;
+  white-space: pre-wrap;
+  font-size: 12pt;
+  color: grey;
+  font-weight: normal;
+  font-style: italic;
+  line-height: 20pt;
+}
+#wiktionary-popup-definition-list {
+  all: unset;
+  display: block;
+  list-style-type: decimal;
+  margin-left: 0;
+  margin-right: 0;
+  margin-bottom: 1em;
+  font-size: 12pt;
+  line-height: 1.3em;
+  padding-left: 30px;
+}
+#wiktionary-popup-definition {
+  all: unset;
+  display: list-item;
+  margin-bottom: 0.3em;
+  font-size: 12pt;
+  line-height: 1.3em;
+}
+#wiktionary-popup-example-list {
+  all: unset;
+  display: block;
+  list-style-type: disc;
+  font-size: 11pt;
+  margin-left: 0;
+  margin-right: 0;
+  padding-left: 15px;
+  line-height: 1.5em;
+}
+#wiktionary-popup-example {
+  all: unset;
+  font-size: 11pt;
+  display: list-item;
+  margin-top: 0;
+  margin-bottom: 0;
+  line-height: 1.5em;
+}
+#wiktionary-popup a {
+  all: unset;
+  text-decoration: none;
+  pointer-events: none;
+}
