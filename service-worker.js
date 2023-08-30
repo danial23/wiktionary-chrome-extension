@@ -1,4 +1,7 @@
 let popup_mode = false;
+chrome.storage.local.get("popup_mode", (result) => {
+  popup_mode = result === undefined ? false : result;
+});
 
 function setupContextMenu() {
   chrome.contextMenus.create({
@@ -46,10 +49,4 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (sender.tab && request.command == "get-popup-mode-state") {
     sendResponse(popup_mode);
   }
-});
-
-chrome.runtime.onStartup.addListener(() => {
-  chrome.storage.local.get("popup_mode", (result) => {
-    popup_mode = result;
-  });
 });
