@@ -33,9 +33,12 @@ document.oncontextmenu = () => {
 };
 
 document.onselectionchange = () => {
-  chrome.runtime.sendMessage({ command: "get-popup-mode-state" }, (response) => {
-    popup_mode = response;
-  });
+  chrome.runtime.sendMessage(
+    { command: "get-popup-mode-state" },
+    (response) => {
+      popup_mode = response;
+    }
+  );
   const selection = document.getSelection();
   if (selection.type == "Range") {
     let text = selection.toString().trim();
@@ -205,28 +208,28 @@ function popupContent(usages) {
     usage_container.appendChild(list);
 
     for (const definition of usage.usage.definitions) {
-      const def = document.createElement("div");
+      let def = document.createElement("div");
       def.setAttribute("class", "wiktionary-popup-definition");
 
-      const def_text = document.createElement("div");
+      let def_text = document.createElement("div");
       def_text.innerHTML = definition.definition;
-      [...def_text.children].forEach((child) => cleanRecursive(child));
+      cleanRecursive(def_text);
       def_text.setAttribute("class", "wiktionary-popup-definition-text");
       def.appendChild(def_text);
 
       if ("examples" in definition) {
-        const examples = document.createElement("div");
+        let examples = document.createElement("div");
         examples.setAttribute("class", "wiktionary-popup-examples");
         def.appendChild(examples);
 
         for (const example_html of definition.examples) {
-          const example = document.createElement("div");
+          let example = document.createElement("div");
           example.setAttribute("class", "wiktionary-popup-example");
           examples.appendChild(example);
 
-          const example_text = document.createElement("div");
+          let example_text = document.createElement("div");
           example_text.innerHTML = example_html;
-          [...example_text.children].forEach((child) => cleanRecursive(child));
+          cleanRecursive(example_text);
           example_text.setAttribute("class", "wiktionary-popup-example-text");
           example.appendChild(example_text);
         }
@@ -245,40 +248,43 @@ function popupContent(usages) {
 // removes ol and li elements (dataset bugs)
 // prunes empty elements
 function cleanRecursive(elem) {
-  const elem2 = document.createElement("span");
-  switch (elem.nodeName) {
-    case "A":
-      elem2.setAttribute("class", "wiktionary-popup-link");
-      break;
-    case "B":
-    case "STRONG":
-      elem2.setAttribute("class", "wiktionary-popup-bold");
-      break;
-    case "I":
-    case "EM":
-      elem2.setAttribute("class", "wiktionary-popup-italic");
-      break;
-    case "SUB":
-      elem2.setAttribute("class", "wiktionary-popup-sub");
-      break;
-    case "SUP":
-      elem2.setAttribute("class", "wiktionary-popup-sup");
-      break;
-    default:
-      break;
-  }
-  elem2.replaceChildren(...elem.childNodes);
-  elem.replaceWith(elem2);
-
-  for (const child of elem2.children) {
+  for (const child of elem.children) {
     if (
       child.nodeName == "OL" ||
+      child.nodeName == "UL" ||
       child.nodeName == "LI" ||
       !child.textContent
     ) {
-      elem2.removeChild(child);
-    } else {
-      cleanRecursive(child);
+      elem.removeChild(child);
+      continue;
     }
+
+    cleanRecursive(child);
+
+    let elem2 = document.createElement("span");
+    switch (child.nodeName) {
+      case "A":
+        elem2.setAttribute("class", "wiktionary-popup-link");
+        break;
+      case "B":
+      case "STRONG":
+        elem2.setAttribute("class", "wiktionary-popup-bold");
+        break;
+      case "I":
+      case "EM":
+        elem2.setAttribute("class", "wiktionary-popup-italic");
+        break;
+      case "SUB":
+        elem2.setAttribute("class", "wiktionary-popup-sub");
+        break;
+      case "SUP":
+        elem2.setAttribute("class", "wiktionary-popup-sup");
+        break;
+      default:
+        break;
+    }
+
+    [...child.childNodes].forEach((child) => elem2.appendChild(child));
+    child.replaceWith(elem2);
   }
 }
