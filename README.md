@@ -1,14 +1,19 @@
-# Wiktionary Chrome Extension
-
-[Link to Chrome Web Store](https://chrome.google.com/webstore/detail/wiktionary/cgeoeehlcbijkefhlmcnoahlelccfndj)
+# Wiktionary (Chrome extension)
 
 Find the definition of any word on a webpage. Searches the [English Wiktionary](https://en.wiktionary.org).
 
-_Note:_ You need to enable the Side Panel feature in Chrome to use this extension.
+[![Chrome](https://storage.googleapis.com/web-dev-uploads/image/WlD8wC6g8khYWPJUsQceQkhXSlv1/UV4C4ybeBTsZt43U4xis.png "Chrome")](https://chrome.google.com/webstore/detail/wiktionary/cgeoeehlcbijkefhlmcnoahlelccfndj)
+
+[or download via direct link](https://github.com/danial23/wiktionary-chrome-extension/releases/download/latest/wiktionary-sidepanel-extension.crx)
 
 ## Usage
-Highlight a word, right click and select "Wiktionary Search".
 
-While the panel is open, you can just highlight another word or phrase and the extension will search it automatically.
+ - Open the side panel by clicking the extension icon (or by right clicking a word and selecting "Wiktionary Search").
 
-_Note:_ This feature does not work in PDF files.
+   _Note:_ You need to enable the Side Panel feature in Chrome.
+   
+ - Once the side panel is open, search Wiktionary by highlighting word.
+
+**Popup Mode:** Toggle popup mode by pressing Alt+W, then highlight a word to see its definition(s) in a popup. You can change this shortcut on chrome://extensions/shortcuts
+
+_Note:_ In PDF files, only the right-click method works.
