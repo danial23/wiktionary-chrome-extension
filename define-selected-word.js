@@ -43,7 +43,11 @@ document.onselectionchange = () => {
   if (selection.type == "Range") {
     let text = selection.toString().trim();
 
-    if (!text) {
+    if (
+      !text ||
+      selection.anchorNode.parentNode.isContentEditable ||
+      ["INPUT", "TEXTAREA"].includes(document.activeElement.nodeName)
+    ) {
       removePopup();
       return;
     }
@@ -61,6 +65,10 @@ document.onselectionchange = () => {
     removePopup();
   }
 };
+
+function isEditable(selection) {
+  element = getSelection();
+}
 
 function showPopupWithCooldown(text) {
   if (isOnCooldown) {
