@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Wiktionary",
   "description": "Search words on Wiktionary",
-  "version": "0.1.3",
+  "version": "0.2.0",
   "minimum_chrome_version": "116",
   "icons": {
     "16": "icon16.png",
