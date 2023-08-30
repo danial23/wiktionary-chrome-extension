@@ -1,26 +1,54 @@
-let popup_hotkey_pressed = false;
+let popup_mode = false;
 const popup_width = 320,
   popup_height = 240; // change in css as well
 
-var isOnCooldown = false; //will delay sending new requests during cooldown
+let isOnCooldown = false; //will delay sending new requests during cooldown
 const requestDelay = 500; //delay amount in ms
 const cooldownDuration = 1500;
-var timeoutId = -1;
+let timeoutId = -1;
 
-function getCooldown() {}
+(async () => {
+  const response = await chrome.runtime.sendMessage({
+    command: "get-popup-mode-state",
+  });
+  popup_mode = response;
+})();
+
+chrome.runtime.onMessage.addListener((request, sender) => {
+  if (!sender.tab && request.command == "set-popup-mode") {
+    popup_mode = request.popup_mode;
+    if (popup_mode) {
+      const selection = document.getSelection();
+      if (selection.type == "Range" && selection.toString().trim()) {
+        showPopupWithCooldown(selection.toString().trim());
+      }
+    } else {
+      removePopup();
+    }
+  }
+});
+
+document.oncontextmenu = () => {
+  removePopup();
+};
 
 document.onselectionchange = () => {
+  chrome.runtime.sendMessage({ command: "get-popup-mode-state" }, (response) => {
+    popup_mode = response;
+  });
   const selection = document.getSelection();
   if (selection.type == "Range") {
     let text = selection.toString().trim();
+
     if (!text) {
       removePopup();
       return;
     }
-    if (popup_hotkey_pressed) {
+
+    if (popup_mode) {
       showPopupWithCooldown(text);
     } else {
-      chrome.runtime.sendMessage(text, () => {
+      chrome.runtime.sendMessage({ command: "search", text: text }, () => {
         if (chrome.runtime.lastError) {
           // ignore
         }
@@ -28,18 +56,6 @@ document.onselectionchange = () => {
     }
   } else {
     removePopup();
-  }
-};
-
-onkeydown = (e) => {
-  if (e.key == "Control") {
-    popup_hotkey_pressed = true;
-  }
-};
-
-onkeyup = (e) => {
-  if (e.key == "Control") {
-    popup_hotkey_pressed = false;
   }
 };
 
@@ -114,77 +130,105 @@ async function fetchDefinitions(entry) {
 
 async function showPopup(text) {
   removePopup();
+
   popup = document.createElement("div");
   popup.setAttribute("id", "wiktionary-popup");
-
-  setupPopupPosition(popup);
 
   const usages = await getDefinitions(text);
   if (usages.length > 0) {
     popup.appendChild(popupContent(usages));
   } else {
-    const no_def = document.createElement("div");
-    no_def.setAttribute("style", "text-align: center; width: 100%;");
-    popup.append(no_def);
-    no_def.innerHTML = "No definition found for <em>" + text + "</em>";
+    return; // don't show popup if no definitions are found
+
+    // const no_def = document.createElement("div");
+    // no_def.setAttribute("style", "text-align: center; width: 100%;");
+    // popup.append(no_def);
+    // no_def.innerHTML = "No definition found for <em>" + text + "</em>";
   }
 
   document.getElementsByTagName("html")[0].append(popup);
+  setupPopupPosition(popup);
 }
 
 function removePopup() {
   const popup = document.getElementById("wiktionary-popup");
   if (popup) {
-    popup.get
     document.getElementsByTagName("html")[0].removeChild(popup);
   }
 }
 
+function setupPopupPosition(popup) {
+  const rect = window.getSelection().getRangeAt(0).getBoundingClientRect();
+  x = window.scrollX + (rect.left + rect.right - popup.offsetWidth) / 2;
+  x = Math.max(10, Math.min(x, window.innerWidth - 10)); // clamp position to screen size
+  y = window.scrollY + rect.top - popup.offsetHeight - 10;
+  if (y < window.scrollY + 10) {
+    y = window.scrollY + rect.bottom + 10;
+  }
+  popup.setAttribute(
+    "style",
+    "top:" + Math.round(y) + "px; left:" + Math.round(x) + "px;"
+  );
+}
+
+// abandon all hope, ye who enter here
 function popupContent(usages) {
   const container = document.createElement("div");
-  container.setAttribute("id", "wiktionary-popup-container");
+  container.setAttribute("id", "wiktionary-popup-contents");
 
   for (const usage of usages) {
     const usage_container = document.createElement("div");
-    usage_container.setAttribute("id", "wiktionary-popup-usage-container");
+    usage_container.setAttribute("class", "wiktionary-popup-usage");
     container.appendChild(usage_container);
 
-    const entry = document.createElement("h2");
-    entry.setAttribute("id", "wiktionary-popup-entry");
-    entry.textContent = usage.key.entry;
+    const entry = document.createElement("div");
+    entry.setAttribute("class", "wiktionary-popup-entry");
     usage_container.appendChild(entry);
+
+    const entry_text = document.createElement("span");
+    entry_text.setAttribute("class", "wiktionary-popup-entry-text");
+    entry_text.textContent = usage.key.entry;
+    entry.appendChild(entry_text);
 
     const pos = document.createElement("span");
     pos.textContent = " • " + usage.usage.partOfSpeech;
-    pos.setAttribute("id", "wiktionary-popup-partOfSpeech");
+    pos.setAttribute("class", "wiktionary-popup-entry-pos");
     entry.appendChild(pos);
 
     const language = document.createElement("span");
-    language.textContent = " (" + usage.usage.language + ")";
-    language.setAttribute("id", "wiktionary-popup-language");
+    language.textContent = " " + usage.usage.language;
+    language.setAttribute("class", "wiktionary-popup-entry-language");
     entry.appendChild(language);
 
-    const list = document.createElement("ol");
-    list.setAttribute("id", "wiktionary-popup-definition-list");
+    const list = document.createElement("div");
+    list.setAttribute("class", "wiktionary-popup-definitions");
     usage_container.appendChild(list);
 
     for (const definition of usage.usage.definitions) {
-      const def = document.createElement("li");
-      def.innerHTML = definition.definition;
-      removeAttributesRecursive(def);
-      def.setAttribute("id", "wiktionary-popup-definition");
+      const def = document.createElement("div");
+      def.setAttribute("class", "wiktionary-popup-definition");
+
+      const def_text = document.createElement("div");
+      def_text.innerHTML = definition.definition;
+      [...def_text.children].forEach((child) => cleanRecursive(child));
+      def_text.setAttribute("class", "wiktionary-popup-definition-text");
+      def.appendChild(def_text);
 
       if ("examples" in definition) {
-        const examples = document.createElement("ul");
-        examples.setAttribute("id", "wiktionary-popup-example-list");
+        const examples = document.createElement("div");
+        examples.setAttribute("class", "wiktionary-popup-examples");
         def.appendChild(examples);
 
-        for (const example of definition.examples) {
-          const ex = document.createElement("li");
-          ex.innerHTML = example;
-          removeAttributesRecursive(ex);
-          ex.setAttribute("id", "wiktionary-popup-example");
-          examples.appendChild(ex);
+        for (const example_html of definition.examples) {
+          const example = document.createElement("div");
+          example.setAttribute("class", "wiktionary-popup-example");
+          examples.appendChild(example);
+
+          const example_text = document.createElement("div");
+          example_text.innerHTML = example_html;
+          [...example_text.children].forEach((child) => cleanRecursive(child));
+          example_text.setAttribute("class", "wiktionary-popup-example-text");
+          example.appendChild(example_text);
         }
       }
 
@@ -197,33 +241,44 @@ function popupContent(usages) {
   return container;
 }
 
-function setupPopupPosition(popup) {
-  const rect = window.getSelection().getRangeAt(0).getBoundingClientRect();
-  x = window.scrollX + (rect.left + rect.right - popup_width) / 2;
-  x = Math.max(10, Math.min(x, window.innerWidth - 10)); // clamp position to screen size
-  y = window.scrollY + rect.top - popup_height - 30;
-  if (y < window.scrollY + 10) {
-    y = window.scrollY + rect.bottom + 10;
-  }
-  popup.setAttribute(
-    "style",
-    "top:" + Math.round(y) + "px; left:" + Math.round(x) + "px;"
-  );
-}
-
-// removes all attributes and prunes empty elements
+// replaces all elements with spans
 // removes ol and li elements (dataset bugs)
-function removeAttributesRecursive(elem) {
-  [...elem.attributes].forEach((attr) => elem.removeAttribute(attr.name));
-  for (const child of elem.children) {
+// prunes empty elements
+function cleanRecursive(elem) {
+  const elem2 = document.createElement("span");
+  switch (elem.nodeName) {
+    case "A":
+      elem2.setAttribute("class", "wiktionary-popup-link");
+      break;
+    case "B":
+    case "STRONG":
+      elem2.setAttribute("class", "wiktionary-popup-bold");
+      break;
+    case "I":
+    case "EM":
+      elem2.setAttribute("class", "wiktionary-popup-italic");
+      break;
+    case "SUB":
+      elem2.setAttribute("class", "wiktionary-popup-sub");
+      break;
+    case "SUP":
+      elem2.setAttribute("class", "wiktionary-popup-sup");
+      break;
+    default:
+      break;
+  }
+  elem2.replaceChildren(...elem.childNodes);
+  elem.replaceWith(elem2);
+
+  for (const child of elem2.children) {
     if (
       child.nodeName == "OL" ||
       child.nodeName == "LI" ||
       !child.textContent
     ) {
-      elem.removeChild(child);
+      elem2.removeChild(child);
     } else {
-      removeAttributesRecursive(child);
+      cleanRecursive(child);
     }
   }
 }

@@ -1,108 +1,85 @@
 #wiktionary-popup {
   all: initial;
-  font-family: Georgia, serif;
-  font-size: 12pt;
-  position: absolute;
   display: block;
+  position: absolute;
+  overflow: auto;
   z-index: 2147483647;
   width: 320px;
-  height: 240px;
-  overflow: auto;
-  color: black;
-  background-color: white;
-  padding: 0.5em;
-  border: double;
+  max-height: 180px;
+  min-height: 90px;
+  border-radius: 5px;
+  background: #f7f0ed;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }
-
-#wiktionary-popup::-webkit-scrollbar {
+#wiktionary-popup-contents {
   all: initial;
-}
-
-#wiktionary-popup-container {
-  all: unset;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  color: black;
-  background-color: white;
-  padding: 0;
-  border: none;
-}
-#wiktionary-popup-usage-container {
-  all: unset;
-  font-size: 12pt;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  color: black;
-  background-color: white;
-  padding: 0;
-  border: none;
-}
-#wiktionary-popup-entry {
-  all: unset;
   display: block;
-  font-size: 16pt;
-  margin-top: 0;
-  margin-bottom: 0.5em;
-  font-weight: bold;
-}
-#wiktionary-popup-partOfSpeech {
-  display: inline;
-  white-space: pre-wrap;
-  font-size: 12pt;
+  font-family: Georgia, serif;
   color: black;
-  font-weight: bold;
-  font-style: normal;
+  font-size: 12pt;
+  padding-left: 1em;
+  padding-right: 1em;
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
 }
-#wiktionary-popup-language {
+.wiktionary-popup-usage {
+  margin-top: 0.9em;
+}
+.wiktionary-popup-entry {
+  margin-top: 0.9em;
+}
+.wiktionary-popup-entry-text {
+  font-weight: bold;
+  font-size: 16pt;
+}
+.wiktionary-popup-entry-pos {
+}
+.wiktionary-popup-entry-language {
   display: inline;
   float: right;
-  white-space: pre-wrap;
-  font-size: 12pt;
   color: grey;
-  font-weight: normal;
   font-style: italic;
   line-height: 20pt;
 }
-#wiktionary-popup-definition-list {
-  all: unset;
-  display: block;
+.wiktionary-popup-definitions {
   list-style-type: decimal;
-  margin-left: 0;
-  margin-right: 0;
-  margin-bottom: 1em;
-  font-size: 12pt;
   line-height: 1.3em;
-  padding-left: 30px;
+  padding-left: 1.5em;
+  margin-top: 0.9em;
 }
-#wiktionary-popup-definition {
-  all: unset;
+.wiktionary-popup-definition {
   display: list-item;
-  margin-bottom: 0.3em;
-  font-size: 12pt;
+  margin-bottom: 0.7em;
+}
+.wiktionary-popup-definition-text {
+  margin-bottom: 0.7em;
+}
+.wiktionary-popup-examples {
+  list-style-type: none;
+  font-size: 11pt;
   line-height: 1.3em;
+  padding-left: 0.5em;
 }
-#wiktionary-popup-example-list {
-  all: unset;
-  display: block;
-  list-style-type: disc;
-  font-size: 11pt;
-  margin-left: 0;
-  margin-right: 0;
-  padding-left: 15px;
-  line-height: 1.5em;
-}
-#wiktionary-popup-example {
-  all: unset;
-  font-size: 11pt;
+.wiktionary-popup-example {
   display: list-item;
-  margin-top: 0;
-  margin-bottom: 0;
-  line-height: 1.5em;
+  margin-bottom: 0.7em;
 }
-#wiktionary-popup a {
-  all: unset;
-  text-decoration: none;
-  pointer-events: none;
+.wiktionary-popup-example-text {
+  font-style: italic;
+}
+.wiktionary-popup-link {
+}
+.wiktionary-popup-bold {
+  font-weight: bold;
+}
+.wiktionary-popup-italic {
+  font-style: italic;
+}
+.wiktionary-popup-sub {
+  vertical-align: sub;
+  font-size: smaller;
+}
+.wiktionary-popup-sup {
+  vertical-align: super;
+  font-size: smaller;
 }

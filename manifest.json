@@ -15,13 +15,21 @@
   },
   "content_scripts": [
     {
-      "matches": ["*://*/*"],
+      "matches": ["<all_urls>"],
       "js": ["define-selected-word.js"],
       "css": ["wiktionary-popup.css"]
     }
   ],
+  "commands": {
+    "toggle-popup-mode": {
+      "suggested_key": {
+        "default": "Alt+W"
+      },
+      "description": "Toggle popup mode"
+    }
+  },
   "side_panel": {
     "default_path": "sidepanel.html"
   },
-  "permissions": ["sidePanel", "contextMenus"]
+  "permissions": ["sidePanel", "contextMenus", "storage"]
 }
