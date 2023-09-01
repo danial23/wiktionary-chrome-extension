@@ -1,3 +1,5 @@
+import feature_flags from "./feature_flags.js";
+
 let popup_mode = false;
 chrome.storage.local.get("popup_mode", (result) => {
   popup_mode = result === undefined ? false : result;
@@ -48,5 +50,11 @@ chrome.commands.onCommand.addListener(async (command) => {
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (sender.tab && request.command == "get-popup-mode-state") {
     sendResponse(popup_mode);
+  }
+});
+
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (sender.tab && request.command == "get-feature-flags") {
+    sendResponse(feature_flags);
   }
 });

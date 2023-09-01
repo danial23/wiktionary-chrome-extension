@@ -1,4 +1,27 @@
-let popup_mode = false;
+const feature_flags = (async () => {
+  let val;
+  await chrome.runtime.sendMessage(
+    { command: "get-feature-flags" },
+    (response) => {
+      val = response;
+    }
+  );
+  return val;
+})();
+
+// this should be a getter function instead
+let popup_mode = (async () => {
+  let val;
+  await chrome.runtime.sendMessage(
+    { command: "get-popup-mode-state" },
+    (response) => {
+      val = response;
+    }
+  );
+  return val;
+})();
+
+let popupPromise = null;
 const popup_width = 320,
   popup_height = 240; // change in css as well
 
@@ -6,13 +29,6 @@ let isOnCooldown = false; //will delay sending new requests during cooldown
 const requestDelay = 500; //delay amount in ms
 const cooldownDuration = 1500;
 let timeoutId = -1;
-
-(async () => {
-  const response = await chrome.runtime.sendMessage({
-    command: "get-popup-mode-state",
-  });
-  popup_mode = response;
-})();
 
 chrome.runtime.onMessage.addListener((request, sender) => {
   if (!sender.tab && request.command == "set-popup-mode") {
@@ -67,6 +83,16 @@ document.onselectionchange = () => {
 };
 
 function showPopupWithCooldown(text) {
+  if (feature_flags.asyncPopup) {
+    newShowPopupWithCooldown(text);
+  } else {
+    oldShowPopupWithCooldown(text);
+  }
+}
+
+function newShowPopupWithCooldown(text) {}
+
+function oldShowPopupWithCooldown(text) {
   if (isOnCooldown) {
     clearTimeout(timeoutId);
     timeoutId = setTimeout(showPopup, requestDelay, text);
