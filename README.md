@@ -17,3 +17,11 @@ Find the definition of any word on a webpage. Searches the [English Wiktionary](
 **Popup Mode:** Toggle popup mode by pressing Alt+W, then highlight a word to see its definition(s) in a popup. You can change this shortcut on chrome://extensions/shortcuts
 
 _Note:_ In PDF files, only the right-click method works.
+
+## Developer notes
+
+To test new features without having to toggle feature flags manually before/after every commit, enter the following command after a git clone: `git update-index --skip-worktree ./feature-flags.js`
+
+If you want to commit changes made to this file, do `git update-index --no-skip-worktree ./feature-flags.js`
+
+You'll still get updates to this file coming in from upstream either way.
