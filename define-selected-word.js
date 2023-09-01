@@ -66,10 +66,6 @@ document.onselectionchange = () => {
   }
 };
 
-function isEditable(selection) {
-  element = getSelection();
-}
-
 function showPopupWithCooldown(text) {
   if (isOnCooldown) {
     clearTimeout(timeoutId);
