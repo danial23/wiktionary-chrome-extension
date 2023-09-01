@@ -1,26 +1,4 @@
-const feature_flags = (async () => {
-  let val;
-  await chrome.runtime.sendMessage(
-    { command: "get-feature-flags" },
-    (response) => {
-      val = response;
-    }
-  );
-  return val;
-})();
-
-// this should be a getter function instead
-let popup_mode = (async () => {
-  let val;
-  await chrome.runtime.sendMessage(
-    { command: "get-popup-mode-state" },
-    (response) => {
-      val = response;
-    }
-  );
-  return val;
-})();
-
+let feature_flags;
 let popupPromise = null;
 const popup_width = 320,
   popup_height = 240; // change in css as well
@@ -30,15 +8,45 @@ const requestDelay = 500; //delay amount in ms
 const cooldownDuration = 1500;
 let timeoutId = -1;
 
+(async () => {
+  feature_flags = await new Promise((resolve) => {
+    chrome.runtime.sendMessage({ command: "get-feature-flags" }, resolve);
+  });
+  if (await get_popup_mode()) {
+    document.addEventListener("selectionchange", popupEventHandler);
+  }
+})();
+
+async function get_popup_mode() {
+  return new Promise((resolve) => {
+    chrome.runtime.sendMessage({ command: "get-popup-mode" }, resolve);
+  });
+}
+
+document.addEventListener("selectionchange", () => {
+  const selection = document.getSelection();
+  if (shouldDefineSelection(selection)) {
+    chrome.runtime.sendMessage(
+      { command: "search", text: selection.toString().trim() },
+      () => {
+        if (chrome.runtime.lastError) {
+          // ignore
+        }
+      }
+    );
+  }
+});
+
 chrome.runtime.onMessage.addListener((request, sender) => {
   if (!sender.tab && request.command == "set-popup-mode") {
-    popup_mode = request.popup_mode;
-    if (popup_mode) {
+    if (request.popup_mode) {
+      document.addEventListener("selectionchange", popupEventHandler);
       const selection = document.getSelection();
-      if (selection.type == "Range" && selection.toString().trim()) {
+      if (shouldDefineSelection(selection)) {
         showPopupWithCooldown(selection.toString().trim());
       }
     } else {
+      document.removeEventListener("selectionchange", popupEventHandler);
       removePopup();
     }
   }
@@ -48,39 +56,29 @@ document.oncontextmenu = () => {
   removePopup();
 };
 
-document.onselectionchange = () => {
-  chrome.runtime.sendMessage(
-    { command: "get-popup-mode-state" },
-    (response) => {
-      popup_mode = response;
-    }
-  );
+async function popupEventHandler() {
   const selection = document.getSelection();
-  if (selection.type == "Range") {
-    let text = selection.toString().trim();
-
-    if (
-      !text ||
-      selection.anchorNode.parentNode.isContentEditable ||
-      ["INPUT", "TEXTAREA"].includes(document.activeElement.nodeName)
-    ) {
-      removePopup();
-      return;
-    }
-
-    if (popup_mode) {
-      showPopupWithCooldown(text);
-    } else {
-      chrome.runtime.sendMessage({ command: "search", text: text }, () => {
-        if (chrome.runtime.lastError) {
-          // ignore
-        }
-      });
-    }
+  if (shouldDefineSelection(selection)) {
+    showPopupWithCooldown(selection.toString().trim());
   } else {
     removePopup();
   }
-};
+}
+
+function shouldDefineSelection(selection) {
+  return !isSelectionEmpty(selection) && !isSelectionInEditableArea(selection);
+}
+
+function isSelectionEmpty(selection) {
+  return selection.type != "Range" || !selection.toString().trim();
+}
+
+function isSelectionInEditableArea(selection) {
+  return (
+    selection.anchorNode.parentNode.isContentEditable ||
+    ["INPUT", "TEXTAREA"].includes(document.activeElement.nodeName)
+  );
+}
 
 function showPopupWithCooldown(text) {
   if (feature_flags.asyncPopup) {
