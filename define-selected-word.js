@@ -1,5 +1,5 @@
 let feature_flags;
-let popupPromise = null;
+let popupAbortController;
 const popup_width = 320,
   popup_height = 240; // change in css as well
 
@@ -9,9 +9,12 @@ const cooldownDuration = 1500;
 let timeoutId = -1;
 
 (async () => {
+  // get feature flags from service worker
   feature_flags = await new Promise((resolve) => {
     chrome.runtime.sendMessage({ command: "get-feature-flags" }, resolve);
   });
+
+  // setup popup mode if enabled
   if (await get_popup_mode()) {
     document.addEventListener("selectionchange", popupEventHandler);
   }
@@ -23,6 +26,7 @@ async function get_popup_mode() {
   });
 }
 
+// search on word select
 document.addEventListener("selectionchange", () => {
   const selection = document.getSelection();
   if (shouldDefineSelection(selection)) {
@@ -37,6 +41,7 @@ document.addEventListener("selectionchange", () => {
   }
 });
 
+// enable/disable popup mode on message from service worker
 chrome.runtime.onMessage.addListener((request, sender) => {
   if (!sender.tab && request.command == "set-popup-mode") {
     if (request.popup_mode) {
@@ -52,16 +57,13 @@ chrome.runtime.onMessage.addListener((request, sender) => {
   }
 });
 
-document.oncontextmenu = () => {
-  removePopup();
-};
-
 async function popupEventHandler() {
   const selection = document.getSelection();
+
+  removePopup();
+
   if (shouldDefineSelection(selection)) {
     showPopupWithCooldown(selection.toString().trim());
-  } else {
-    removePopup();
   }
 }
 
@@ -80,6 +82,11 @@ function isSelectionInEditableArea(selection) {
   );
 }
 
+// TODO: make this work (issue #3)
+document.oncontextmenu = () => {
+  removePopup();
+};
+
 function showPopupWithCooldown(text) {
   if (feature_flags.asyncPopup) {
     newShowPopupWithCooldown(text);
@@ -88,7 +95,83 @@ function showPopupWithCooldown(text) {
   }
 }
 
-function newShowPopupWithCooldown(text) {}
+// no cooldown implementation yet
+function newShowPopupWithCooldown(text) {
+  popupAbortController = new AbortController();
+  (async () => {
+    await newShowPopup(text, popupAbortController.signal);
+  })();
+  popupAbortController = null;
+}
+
+async function newShowPopup(text, abortSignal) {
+  popup = document.createElement("div");
+  popup.setAttribute("id", "wiktionary-popup");
+
+  const usages = await newGetDefinitions(text, abortSignal);
+  if (usages.length > 0) {
+    popup.appendChild(popupContent(usages));
+    document.getElementsByTagName("html")[0].append(popup);
+    setupPopupPosition(popup);
+  }
+}
+
+async function newGetDefinitions(text, abortSignal) {
+  const text_lowercase = text.toLowerCase();
+  const doc_lang = document.documentElement.lang.split("-", 1)[0];
+  const user_lang = window.navigator.language.split("-", 1)[0];
+  const order_preference = [user_lang, "en", doc_lang]; // from least preferred to most
+  const usages = await fetchDefinitions(text, abortSignal);
+  if (text != text_lowercase) {
+    usages.push(...(await fetchDefinitions(text_lowercase, abortSignal)));
+  }
+
+  usages.sort((a, b) => {
+    // lowercase entries have a lower preference
+    if (a.key.entry.localeCompare(b.key.entry) != 0) {
+      return b.key.entry.localeCompare(a.key.entry);
+    }
+    if (
+      order_preference.findIndex((lang) => lang == a.key.lang) !=
+      order_preference.findIndex((lang) => lang == b.key.lang)
+    ) {
+      return (
+        order_preference.findIndex((lang) => lang == b.key.lang) -
+        order_preference.findIndex((lang) => lang == a.key.lang)
+      );
+    }
+    if (a.key.lang != b.key.lang) {
+      return a.key.lang.localeCompare(b.key.lang);
+    }
+    return a.key.index - b.key.index;
+  });
+
+  return usages;
+}
+
+async function newFetchDefinitions(entry, abortSignal) {
+  const usages = [];
+  const response = await fetch(
+    "https://en.wiktionary.org/api/rest_v1/page/definition/" +
+      entry.replace(" ", "_"),
+    { signal: abortSignal }
+  );
+
+  if (response.status != 200) {
+    return [];
+  }
+
+  const json = await response.json();
+  for (const key of Object.keys(json)) {
+    json[key].forEach((usage, index) => {
+      usages.push({
+        key: { entry: entry, lang: key, index: index },
+        usage: usage,
+      });
+    });
+  }
+  return usages;
+}
 
 function oldShowPopupWithCooldown(text) {
   if (isOnCooldown) {
@@ -160,8 +243,6 @@ async function fetchDefinitions(entry) {
 }
 
 async function showPopup(text) {
-  removePopup();
-
   popup = document.createElement("div");
   popup.setAttribute("id", "wiktionary-popup");
 
