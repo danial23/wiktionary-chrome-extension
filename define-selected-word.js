@@ -1,14 +1,8 @@
 let feature_flags;
 const popup_width = 320,
-  popup_height = 240; // change in css as well
-
+  popup_height = 240; // change this in css as well
 let popupAbortController = null;
-
-let isOnCooldown = false; //will delay sending new requests during cooldown
-const cooldownDuration = 1500;
-const newCooldownDuration = 500; // for async popup
-const requestDelay = 500;
-let timeoutId = -1;
+const cooldownDuration = 500; // ms
 
 (async () => {
   // get feature flags from service worker
@@ -95,37 +89,29 @@ document.addEventListener("contextmenu", () => {
   }, 3); // anything >1 works. What's the most reliable value?
 });
 
-function showPopupWithCooldown(text) {
-  if (feature_flags.asyncPopup) {
-    newShowPopupWithCooldown(text);
-  } else {
-    oldShowPopupWithCooldown(text);
-  }
-}
-
 // cooldown behaviour: if a new req comes in while still busy,
 // cancel the old one and issue a cooldown. The popup will be
 // shown if the req is still active after the cooldown.
-async function newShowPopupWithCooldown(text) {
+async function showPopupWithCooldown(text) {
   const ac = new AbortController();
   if (popupAbortController) {
     // if there's an active req, cancel it and issue a cooldown
     popupAbortController.abort();
     popupAbortController = ac;
-    await new Promise((resolve) => setTimeout(resolve, newCooldownDuration));
+    await new Promise((resolve) => setTimeout(resolve, cooldownDuration));
   } else {
     popupAbortController = ac;
   }
 
   // are we still the active req?
   if (!ac.signal.aborted) {
-    await newShowPopup(text, ac.signal);
+    await showPopup(text, ac.signal);
   }
 
   // Don't clear the abort controller just yet.
   // We want to eliminate quick-flashing popups
   // when selectionchange is fired rapidly.
-  await new Promise((resolve) => setTimeout(resolve, newCooldownDuration));
+  await new Promise((resolve) => setTimeout(resolve, cooldownDuration));
 
   // if there's no new req, clear the abort controller
   if (popupAbortController == ac) {
@@ -133,11 +119,11 @@ async function newShowPopupWithCooldown(text) {
   }
 }
 
-async function newShowPopup(text, abortSignal) {
+async function showPopup(text, abortSignal) {
   popup = document.createElement("div");
   popup.setAttribute("id", "wiktionary-popup");
 
-  const usages = await newGetDefinitions(text, abortSignal);
+  const usages = await getDefinitions(text, abortSignal);
   if (usages.length > 0 && !abortSignal.aborted) {
     popup.appendChild(popupContent(usages));
     document.getElementsByTagName("html")[0].append(popup);
@@ -145,7 +131,7 @@ async function newShowPopup(text, abortSignal) {
   }
 }
 
-async function newGetDefinitions(text, abortSignal) {
+async function getDefinitions(text, abortSignal) {
   const text_lowercase = text.toLowerCase();
   const doc_lang = document.documentElement.lang.split("-", 1)[0];
   const user_lang = window.navigator.language.split("-", 1)[0];
@@ -182,84 +168,19 @@ async function newGetDefinitions(text, abortSignal) {
   return usages;
 }
 
-async function newFetchDefinitions(entry, abortSignal) {
+async function fetchDefinitions(entry, abortSignal) {
   const usages = [];
   const response = await fetch(
     "https://en.wiktionary.org/api/rest_v1/page/definition/" +
-      entry.replace(" ", "_"),
+    entry.replace(" ", "_"),
     { signal: abortSignal }
-  );
-
-  if (response.status != 200) {
-    return [];
-  }
-
-  const json = await response.json();
-  for (const key of Object.keys(json)) {
-    json[key].forEach((usage, index) => {
-      usages.push({
-        key: { entry: entry, lang: key, index: index },
-        usage: usage,
-      });
-    });
-  }
-  return usages;
-}
-
-function oldShowPopupWithCooldown(text) {
-  if (isOnCooldown) {
-    clearTimeout(timeoutId);
-    timeoutId = setTimeout(showPopup, requestDelay, text);
-  } else {
-    isOnCooldown = true;
-    timeoutId = setTimeout(() => {
-      isOnCooldown = false;
-    }, cooldownDuration);
-    showPopup(text);
-  }
-}
-
-async function getDefinitions(text) {
-  const text_lowercase = text.toLowerCase();
-  const doc_lang = document.documentElement.lang.split("-", 1)[0];
-  const user_lang = window.navigator.language.split("-", 1)[0];
-  const order_preference = [user_lang, "en", doc_lang]; // from least preferred to most
-  const usages = await fetchDefinitions(text);
-  if (text != text_lowercase) {
-    usages.push(...(await fetchDefinitions(text_lowercase)));
-  }
-
-  usages.sort((a, b) => {
-    // lowercase entries have a lower preference
-    if (a.key.entry.localeCompare(b.key.entry) != 0) {
-      return b.key.entry.localeCompare(a.key.entry);
+  ).catch((e) => {
+    if (e.name != "AbortError") {
+      throw e;
     }
-    if (
-      order_preference.findIndex((lang) => lang == a.key.lang) !=
-      order_preference.findIndex((lang) => lang == b.key.lang)
-    ) {
-      return (
-        order_preference.findIndex((lang) => lang == b.key.lang) -
-        order_preference.findIndex((lang) => lang == a.key.lang)
-      );
-    }
-    if (a.key.lang != b.key.lang) {
-      return a.key.lang.localeCompare(b.key.lang);
-    }
-    return a.key.index - b.key.index;
   });
 
-  return usages;
-}
-
-async function fetchDefinitions(entry) {
-  const usages = [];
-  const response = await fetch(
-    "https://en.wiktionary.org/api/rest_v1/page/definition/" +
-      entry.replace(" ", "_")
-  );
-
-  if (response.status != 200) {
+  if (!response || response.status != 200) {
     return [];
   }
 
@@ -273,26 +194,6 @@ async function fetchDefinitions(entry) {
     });
   }
   return usages;
-}
-
-async function showPopup(text) {
-  popup = document.createElement("div");
-  popup.setAttribute("id", "wiktionary-popup");
-
-  const usages = await getDefinitions(text);
-  if (usages.length > 0) {
-    popup.appendChild(popupContent(usages));
-  } else {
-    return; // don't show popup if no definitions are found
-
-    // const no_def = document.createElement("div");
-    // no_def.setAttribute("style", "text-align: center; width: 100%;");
-    // popup.append(no_def);
-    // no_def.innerHTML = "No definition found for <em>" + text + "</em>";
-  }
-
-  document.getElementsByTagName("html")[0].append(popup);
-  setupPopupPosition(popup);
 }
 
 function removePopup() {
