@@ -1,11 +1,13 @@
 let feature_flags;
-let popupAbortController;
 const popup_width = 320,
   popup_height = 240; // change in css as well
 
+let popupAbortController = null;
+
 let isOnCooldown = false; //will delay sending new requests during cooldown
-const requestDelay = 500; //delay amount in ms
 const cooldownDuration = 1500;
+const newCooldownDuration = 500; // for async popup
+const requestDelay = 500;
 let timeoutId = -1;
 
 (async () => {
@@ -82,10 +84,16 @@ function isSelectionInEditableArea(selection) {
   );
 }
 
-// TODO: make this work (issue #3)
-document.oncontextmenu = () => {
+document.addEventListener("contextmenu", () => {
+  document.removeEventListener("selectionchange", popupEventHandler);
   removePopup();
-};
+  setTimeout(() => {
+    if (popupAbortController) {
+      popupAbortController.abort();
+    }
+    document.addEventListener("selectionchange", popupEventHandler);
+  }, 3); // anything >1 works. What's the most reliable value?
+});
 
 function showPopupWithCooldown(text) {
   if (feature_flags.asyncPopup) {
@@ -95,13 +103,34 @@ function showPopupWithCooldown(text) {
   }
 }
 
-// no cooldown implementation yet
-function newShowPopupWithCooldown(text) {
-  popupAbortController = new AbortController();
-  (async () => {
-    await newShowPopup(text, popupAbortController.signal);
-  })();
-  popupAbortController = null;
+// cooldown behaviour: if a new req comes in while still busy,
+// cancel the old one and issue a cooldown. The popup will be
+// shown if the req is still active after the cooldown.
+async function newShowPopupWithCooldown(text) {
+  const ac = new AbortController();
+  if (popupAbortController) {
+    // if there's an active req, cancel it and issue a cooldown
+    popupAbortController.abort();
+    popupAbortController = ac;
+    await new Promise((resolve) => setTimeout(resolve, newCooldownDuration));
+  } else {
+    popupAbortController = ac;
+  }
+
+  // are we still the active req?
+  if (!ac.signal.aborted) {
+    await newShowPopup(text, ac.signal);
+  }
+
+  // Don't clear the abort controller just yet.
+  // We want to eliminate quick-flashing popups
+  // when selectionchange is fired rapidly.
+  await new Promise((resolve) => setTimeout(resolve, newCooldownDuration));
+
+  // if there's no new req, clear the abort controller
+  if (popupAbortController == ac) {
+    popupAbortController = null;
+  }
 }
 
 async function newShowPopup(text, abortSignal) {
@@ -109,7 +138,7 @@ async function newShowPopup(text, abortSignal) {
   popup.setAttribute("id", "wiktionary-popup");
 
   const usages = await newGetDefinitions(text, abortSignal);
-  if (usages.length > 0) {
+  if (usages.length > 0 && !abortSignal.aborted) {
     popup.appendChild(popupContent(usages));
     document.getElementsByTagName("html")[0].append(popup);
     setupPopupPosition(popup);
@@ -121,9 +150,13 @@ async function newGetDefinitions(text, abortSignal) {
   const doc_lang = document.documentElement.lang.split("-", 1)[0];
   const user_lang = window.navigator.language.split("-", 1)[0];
   const order_preference = [user_lang, "en", doc_lang]; // from least preferred to most
-  const usages = await fetchDefinitions(text, abortSignal);
+  const requests = [fetchDefinitions(text, abortSignal)];
   if (text != text_lowercase) {
-    usages.push(...(await fetchDefinitions(text_lowercase, abortSignal)));
+    requests.push(fetchDefinitions(text_lowercase, abortSignal));
+  }
+  const usages = [];
+  for (const request of requests) {
+    usages.push(...(await request));
   }
 
   usages.sort((a, b) => {

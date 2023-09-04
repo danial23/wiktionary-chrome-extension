@@ -8,11 +8,11 @@ Find the definition of any word on a webpage. Searches the [English Wiktionary](
 
 ## Usage
 
- - Open the side panel by clicking the extension icon (or by right clicking a word and selecting "Wiktionary Search").
+- Open the side panel by clicking the extension icon (or by right clicking a word and selecting "Wiktionary Search").
 
-   _Note:_ You need to enable the Side Panel feature in Chrome.
-   
- - Once the side panel is open, search Wiktionary by highlighting word.
+  _Note:_ You need to enable the Side Panel feature in Chrome.
+
+- Once the side panel is open, search Wiktionary by highlighting word.
 
 **Popup Mode:** Toggle popup mode by pressing Alt+W, then highlight a word to see its definition(s) in a popup. You can change this shortcut on chrome://extensions/shortcuts
 

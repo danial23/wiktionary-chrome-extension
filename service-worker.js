@@ -1,4 +1,4 @@
-import feature_flags from "./feature_flags.js";
+import feature_flags from "./feature-flags.js";
 let popup_mode = false;
 
 chrome.storage.local.get("popup_mode", (result) => {
