@@ -4,16 +4,13 @@ const popup_width = 320,
 let popupAbortController = null;
 const cooldownDuration = 500; // ms
 
+let allowPopups = true; // set to true to disable popups
+
 (async () => {
   // get feature flags from service worker
   feature_flags = await new Promise((resolve) => {
     chrome.runtime.sendMessage({ command: "get-feature-flags" }, resolve);
   });
-
-  // setup popup mode if enabled
-  if (await get_popup_mode()) {
-    document.addEventListener("selectionchange", popupEventHandler);
-  }
 })();
 
 async function get_popup_mode() {
@@ -23,8 +20,19 @@ async function get_popup_mode() {
 }
 
 // search on word select
-document.addEventListener("selectionchange", () => {
+document.addEventListener("selectionchange", async () => {
   const selection = document.getSelection();
+
+  if (await get_popup_mode()) {
+    removePopup();
+    if (shouldDefineSelection(selection) && allowPopups) {
+      showPopupWithCooldown(selection.toString().trim());
+    }
+  }
+  else {
+    removePopup();
+  }
+
   if (shouldDefineSelection(selection)) {
     chrome.runtime.sendMessage(
       { command: "search", text: selection.toString().trim() },
@@ -41,27 +49,15 @@ document.addEventListener("selectionchange", () => {
 chrome.runtime.onMessage.addListener((request, sender) => {
   if (!sender.tab && request.command == "set-popup-mode") {
     if (request.popup_mode) {
-      document.addEventListener("selectionchange", popupEventHandler);
       const selection = document.getSelection();
-      if (shouldDefineSelection(selection)) {
+      if (shouldDefineSelection(selection) && allowPopups) {
         showPopupWithCooldown(selection.toString().trim());
       }
     } else {
-      document.removeEventListener("selectionchange", popupEventHandler);
       removePopup();
     }
   }
 });
-
-async function popupEventHandler() {
-  const selection = document.getSelection();
-
-  removePopup();
-
-  if (shouldDefineSelection(selection)) {
-    showPopupWithCooldown(selection.toString().trim());
-  }
-}
 
 function shouldDefineSelection(selection) {
   return !isSelectionEmpty(selection) && !isSelectionInEditableArea(selection);
@@ -79,14 +75,14 @@ function isSelectionInEditableArea(selection) {
 }
 
 document.addEventListener("contextmenu", () => {
-  document.removeEventListener("selectionchange", popupEventHandler);
+  allowPopups = false;
+  if (popupAbortController) {
+    popupAbortController.abort();
+  }
   removePopup();
   setTimeout(() => {
-    if (popupAbortController) {
-      popupAbortController.abort();
-    }
-    document.addEventListener("selectionchange", popupEventHandler);
-  }, 3); // anything >1 works. What's the most reliable value?
+    allowPopups = true;
+  }, 100);
 });
 
 // cooldown behaviour: if a new req comes in while still busy,
