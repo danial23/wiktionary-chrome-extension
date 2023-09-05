@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Wiktionary",
   "description": "Search words on Wiktionary",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "minimum_chrome_version": "116",
   "icons": {
     "16": "icon16.png",
@@ -16,9 +16,15 @@
   },
   "content_scripts": [
     {
-      "matches": ["<all_urls>"],
-      "js": ["define-selected-word.js"],
-      "css": ["wiktionary-popup.css"]
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "define-selected-word.js"
+      ],
+      "css": [
+        "wiktionary-popup.css"
+      ]
     }
   ],
   "commands": {
@@ -32,5 +38,9 @@
   "side_panel": {
     "default_path": "sidepanel.html"
   },
-  "permissions": ["sidePanel", "contextMenus", "storage"]
+  "permissions": [
+    "sidePanel",
+    "contextMenus",
+    "storage"
+  ]
 }
