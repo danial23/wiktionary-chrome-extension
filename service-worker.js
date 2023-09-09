@@ -8,7 +8,11 @@ chrome.storage.local.get("popup_mode", (result) => {
 });
 
 chrome.storage.local.get("language", (result) => {
-  language = result ? result.language : "en";
+  if (result && result.language) {
+    language = result.language;
+  } else {
+    chrome.storage.local.set({ language: "en" });
+  }
 });
 
 chrome.sidePanel
