@@ -38,6 +38,7 @@
   line-height: 1em;
 }
 .wiktionary-popup-entry-pos {
+  white-space: nowrap;
   line-height: 2em;
 }
 .wiktionary-popup-entry-language {
