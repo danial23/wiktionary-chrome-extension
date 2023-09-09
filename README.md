@@ -16,7 +16,7 @@ Find the definition of any word on a webpage. Searches the [English Wiktionary](
 
 - To change the language of Wiktionary, right-click the Wiktionary icon and select "options".
 
-**Popup Mode:** Toggle popup mode by pressing Alt+W, then highlight a word (by double-clicking or dragging) to see its definition(s) in a popup. Popup Mode is only available in English. You can change this shortcut on chrome://extensions/shortcuts
+**Popup Mode:** Toggle popup mode by pressing Alt+P, then highlight a word (by double-clicking or dragging) to see its definition(s) in a popup. Popup Mode is only available in English. You can change this shortcut on chrome://extensions/shortcuts
 
 _Note:_ In PDF files, the methods above do not work. You can instead highlight the word while the side panel is open, then right click and select "Wiktionary Search".
 
