@@ -1,22 +1,24 @@
 # Wiktionary (Chrome extension)
 
-Find the definition of any word on a webpage. Searches the [English Wiktionary](https://en.wiktionary.org).
+Find the definition of any word on a webpage. Available in 162 languages.
 
 [![Chrome](https://storage.googleapis.com/web-dev-uploads/image/WlD8wC6g8khYWPJUsQceQkhXSlv1/UV4C4ybeBTsZt43U4xis.png "Chrome")](https://chrome.google.com/webstore/detail/wiktionary/cgeoeehlcbijkefhlmcnoahlelccfndj)
 
-[or download via direct link](https://github.com/danial23/wiktionary-chrome-extension/releases/download/v0.2.2/wiktionary-chrome-extension.crx)
+[or download via direct link](https://github.com/danial23/wiktionary-chrome-extension/releases/download/v0.3.0/wiktionary-chrome-extension.crx)
 
 ## Usage
 
-- Open the side panel by right clicking a word and selecting "Wiktionary Search" (or by clicking the side panel icon and selecting "Wiktionary").
+- Open the side panel by clicking the extension icon (or by clicking the side panel icon and selecting "Wiktionary").
 
-  _Note:_ You need to enable the Side Panel feature in Chrome.
+  **Note:** You need to enable the Side Panel feature in Chrome.
 
 - Once the side panel is open, search Wiktionary by highlighting a word.
 
-**Popup Mode:** Toggle popup mode by pressing Alt+W, then highlight a word (by double-clicking or dragging) to see its definition(s) in a popup. You can change this shortcut on chrome://extensions/shortcuts
+- To change the language of Wiktionary, right-click the extension icon and select _options_.
 
-_Note:_ In PDF files, only the right-click method works.
+**Popup Mode:** Toggle popup mode by pressing Alt+P, then highlight a word (by double-clicking or dragging) to see its definition(s) in a popup. Popup Mode is only available in English. You can change this shortcut on chrome://extensions/shortcuts
+
+**Note:** In PDF files, the methods above do not work. Instead, while the side panel is open, highlight a word, right-click it and select _Wiktionary search_.
 
 ## Developer notes
 
