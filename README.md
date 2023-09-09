@@ -4,7 +4,7 @@ Find the definition of any word on a webpage. Available in 162 languages.
 
 [![Chrome](https://storage.googleapis.com/web-dev-uploads/image/WlD8wC6g8khYWPJUsQceQkhXSlv1/UV4C4ybeBTsZt43U4xis.png "Chrome")](https://chrome.google.com/webstore/detail/wiktionary/cgeoeehlcbijkefhlmcnoahlelccfndj)
 
-[or download via direct link](https://github.com/danial23/wiktionary-chrome-extension/releases/download/v0.3.0/wiktionary-chrome-extension.crx)
+[or download via direct link](https://github.com/danial23/wiktionary-chrome-extension/releases/download/v0.3.1/wiktionary-chrome-extension.crx)
 
 ## Usage
 
