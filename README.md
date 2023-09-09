@@ -10,7 +10,7 @@ Find the definition of any word on a webpage. Available in 162 languages.
 
 - Open the side panel by clicking the extension icon (or by clicking the side panel icon and selecting "Wiktionary").
 
-  _Note:_ You need to enable the Side Panel feature in Chrome.
+  **Note:** You need to enable the Side Panel feature in Chrome.
 
 - Once the side panel is open, search Wiktionary by highlighting a word.
 
@@ -18,7 +18,7 @@ Find the definition of any word on a webpage. Available in 162 languages.
 
 **Popup Mode:** Toggle popup mode by pressing Alt+P, then highlight a word (by double-clicking or dragging) to see its definition(s) in a popup. Popup Mode is only available in English. You can change this shortcut on chrome://extensions/shortcuts
 
-_Note:_ In PDF files, the methods above do not work. You can instead highlight the word while the side panel is open, then right click and select _Wiktionary search_.
+**Note:** In PDF files, the methods above do not work. You can instead highlight the word while the side panel is open, then right click and select _Wiktionary search_.
 
 ## Developer notes
 
