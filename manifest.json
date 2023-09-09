@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Wiktionary",
   "description": "Search words on Wiktionary",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "minimum_chrome_version": "116",
   "icons": {
     "16": "icon16.png",
@@ -13,6 +13,13 @@
   "background": {
     "service_worker": "service-worker.js",
     "type": "module"
+  },
+  "action": {
+    "default_title": "Open Wiktionary"
+  },
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": false
   },
   "content_scripts": [
     {

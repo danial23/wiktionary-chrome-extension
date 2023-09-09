@@ -1,9 +1,20 @@
 import feature_flags from "./feature-flags.js";
 let popup_mode = false;
+let language = "en";
+let lastSearch = "";
 
 chrome.storage.local.get("popup_mode", (result) => {
-  popup_mode = result === undefined ? false : result;
+  popup_mode = result ? false : result.popup_mode;
 });
+
+chrome.storage.local.get("language", (result) => {
+  console.log(result);
+  language = result ? "en" : result.language;
+});
+
+chrome.sidePanel
+  .setPanelBehavior({ openPanelOnActionClick: true })
+  .catch((error) => console.error(error));
 
 function setupContextMenu() {
   chrome.contextMenus.create({
@@ -57,4 +68,33 @@ chrome.runtime.onMessage.addListener((request, _, sendResponse) => {
   if (request.command == "get-feature-flags") {
     sendResponse(feature_flags);
   }
+});
+
+chrome.runtime.onMessage.addListener((request, _, sendResponse) => {
+  if (request.command == "get-language") {
+    sendResponse(language);
+  }
+});
+
+chrome.runtime.onMessage.addListener((request) => {
+  if (request.command == "set-language") {
+    language = request.language;
+    chrome.storage.local.set({ language: language });
+  }
+});
+
+chrome.runtime.onMessage.addListener((request, _) => {
+  if (request.command == "search") {
+    lastSearch = request.text;
+  }
+});
+
+chrome.runtime.onMessage.addListener((request, _, sendResponse) => {
+  if (request.command == "get-last-search") {
+    sendResponse(lastSearch);
+  }
+});
+
+chrome.windows.onRemoved.addListener((_) => {
+  lastSearch = "";
 });

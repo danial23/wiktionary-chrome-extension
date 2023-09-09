@@ -14,6 +14,7 @@
 #wiktionary-popup-contents {
   all: initial;
   display: block;
+  user-select: none;
   font-family: Georgia, serif;
   color: black;
   font-size: 12pt;
@@ -21,6 +22,9 @@
   padding-right: 1em;
   padding-top: 0.5em;
   padding-bottom: 0.5em;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  hyphens: auto;
 }
 .wiktionary-popup-usage {
   margin-top: 0.9em;
@@ -68,6 +72,11 @@
   font-style: italic;
 }
 .wiktionary-popup-link {
+  color: darkred;
+}
+.wiktionary-popup-link:hover {
+  text-decoration: underline;
+  cursor: pointer;
 }
 .wiktionary-popup-bold {
   font-weight: bold;

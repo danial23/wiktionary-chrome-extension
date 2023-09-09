@@ -1,26 +1,45 @@
 let isOnCooldown = false; //will delay sending new requests during cooldown
-const requestDelay = 1000; //delay amount in ms
-const cooldownDuration = 3000;
+const requestDelay = 500; //delay amount in ms
+const cooldownDuration = 1500;
 let timeoutId = -1;
+let url = "https://en.m.wiktionary.org";
+const wiktionary = document.getElementById("wiktionary");
 
 chrome.runtime.onMessage.addListener((message) => {
   if (message.command == "search") {
     if (isOnCooldown) {
       clearTimeout(timeoutId);
-      timeoutId = setTimeout(getWordDefinition, requestDelay, message.text);
+      timeoutId = setTimeout(showDefinition, requestDelay, message.text);
     } else {
       isOnCooldown = true;
       timeoutId = setTimeout(() => {
         isOnCooldown = false;
       }, cooldownDuration);
-      getWordDefinition(message.text);
+      showDefinition(message.text);
     }
   }
 });
 
-document.getElementById("wiktionary").focus();
+chrome.runtime.sendMessage({ command: "get-language" }, (response) => {
+  changeLanguage(response);
+  chrome.runtime.sendMessage({ command: "get-last-search" }, showDefinition);
+});
 
-function getWordDefinition(text) {
-  document.getElementById("wiktionary").src =
-    "https://en.m.wiktionary.org/wiki/" + text.replace(" ", "_");
+function changeLanguage(language) {
+  url = "https://" + language + ".m.wiktionary.org";
+  wiktionary.src = url;
+  wiktionary.focus();
 }
+
+function showDefinition(text) {
+  if (text) {
+    wiktionary.src =
+      url + "/wiki/" + text.replaceAll(" ", "_");
+  }
+}
+
+chrome.runtime.onMessage.addListener((message) => {
+  if (message.command == "set-language") {
+    changeLanguage(message.language);
+  }
+});
