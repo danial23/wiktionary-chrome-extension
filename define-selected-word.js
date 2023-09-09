@@ -29,6 +29,13 @@ window.addEventListener("blur", () => {
   });
 });
 
+window.addEventListener("resize", () => {
+  const popup = document.getElementById("wiktionary-popup");
+  if (popup) {
+    setupPopupPosition(popup);
+  }
+});
+
 document.addEventListener("selectionchange", updatePopupAndSearch);
 
 async function updatePopupAndSearch() {
