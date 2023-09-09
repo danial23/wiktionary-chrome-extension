@@ -18,7 +18,7 @@ Find the definition of any word on a webpage. Available in 162 languages.
 
 **Popup Mode:** Toggle popup mode by pressing Alt+P, then highlight a word (by double-clicking or dragging) to see its definition(s) in a popup. Popup Mode is only available in English. You can change this shortcut on chrome://extensions/shortcuts
 
-**Note:** In PDF files, the methods above do not work. You can instead highlight the word while the side panel is open, then right click and select _Wiktionary search_.
+**Note:** In PDF files, the methods above do not work. Instead, while the side panel is open, highlight a word, right-click it and select _Wiktionary search_.
 
 ## Developer notes
 
