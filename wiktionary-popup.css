@@ -24,7 +24,6 @@
   padding-top: 0.5em;
   padding-bottom: 0.5em;
   overflow-wrap: break-word;
-  word-wrap: break-word;
   hyphens: auto;
 }
 .wiktionary-popup-usage {
@@ -39,13 +38,14 @@
   line-height: 1em;
 }
 .wiktionary-popup-entry-pos {
+  line-height: 2em;
 }
 .wiktionary-popup-entry-language {
   display: inline;
   float: right;
   color: grey;
   font-style: italic;
-  line-height: 20pt;
+  line-height: 2em;
 }
 .wiktionary-popup-definitions {
   list-style-type: decimal;
