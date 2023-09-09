@@ -19,7 +19,7 @@ chrome.sidePanel
 function setupContextMenu() {
   chrome.contextMenus.create({
     id: "wiktionary",
-    title: "Wiktionary Search",
+    title: "Wiktionary search",
     contexts: ["selection"],
   });
 }

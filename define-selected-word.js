@@ -20,14 +20,7 @@ async function get_popup_mode() {
   });
 }
 
-window.addEventListener("focus", () => {
-  const selection = document.getSelection();
-  chrome.runtime.sendMessage({
-    command: "search",
-    text: shouldDefineSelection(selection) ?
-      selection.toString().trim() : ""
-  });
-});
+window.addEventListener("focus", updatePopupAndSearch);
 
 window.addEventListener("blur", () => {
   chrome.runtime.sendMessage({
@@ -36,8 +29,9 @@ window.addEventListener("blur", () => {
   });
 });
 
-// search on word select
-document.addEventListener("selectionchange", async () => {
+document.addEventListener("selectionchange", updatePopupAndSearch);
+
+async function updatePopupAndSearch() {
   const selection = document.getSelection();
 
   removePopup();
@@ -54,15 +48,15 @@ document.addEventListener("selectionchange", async () => {
       }
     }
   );
-});
+}
 
 // enable/disable popup mode on message from service worker
 chrome.runtime.onMessage.addListener((request, sender) => {
   if (!sender.tab && request.command == "set-popup-mode") {
+    removePopup();
+
     if (request.popup_mode) {
       const selection = document.getSelection();
-
-      removePopup();
 
       if (shouldDefineSelection(selection) && allowPopups) {
         showPopupWithCooldown(selection.toString().trim());

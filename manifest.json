@@ -15,7 +15,7 @@
     "type": "module"
   },
   "action": {
-    "default_title": "Open Wiktionary"
+    "default_title": "Wiktionary"
   },
   "options_ui": {
     "page": "options.html",
@@ -37,7 +37,7 @@
   "commands": {
     "toggle-popup-mode": {
       "suggested_key": {
-        "default": "Alt+W"
+        "default": "Alt+P"
       },
       "description": "Toggle popup mode"
     }
