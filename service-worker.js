@@ -4,12 +4,11 @@ let language = "en";
 let lastSearch = "";
 
 chrome.storage.local.get("popup_mode", (result) => {
-  popup_mode = result ? false : result.popup_mode;
+  popup_mode = result ? result.popup_mode : false;
 });
 
 chrome.storage.local.get("language", (result) => {
-  console.log(result);
-  language = result ? "en" : result.language;
+  language = result ? result.language : "en";
 });
 
 chrome.sidePanel
