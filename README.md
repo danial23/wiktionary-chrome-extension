@@ -1,6 +1,6 @@
 # Wiktionary (Chrome extension)
 
-Find the definition of any word on a webpage. Searches the [English Wiktionary](https://en.wiktionary.org).
+Find the definition of any word on a webpage. Available in 162 languages.
 
 [![Chrome](https://storage.googleapis.com/web-dev-uploads/image/WlD8wC6g8khYWPJUsQceQkhXSlv1/UV4C4ybeBTsZt43U4xis.png "Chrome")](https://chrome.google.com/webstore/detail/wiktionary/cgeoeehlcbijkefhlmcnoahlelccfndj)
 
@@ -14,11 +14,11 @@ Find the definition of any word on a webpage. Searches the [English Wiktionary](
 
 - Once the side panel is open, search Wiktionary by highlighting a word.
 
-- To change the language of Wiktionary, right-click the Wiktionary icon and select "options".
+- To change the language of Wiktionary, right-click the extension icon and select _options_.
 
 **Popup Mode:** Toggle popup mode by pressing Alt+P, then highlight a word (by double-clicking or dragging) to see its definition(s) in a popup. Popup Mode is only available in English. You can change this shortcut on chrome://extensions/shortcuts
 
-_Note:_ In PDF files, the methods above do not work. You can instead highlight the word while the side panel is open, then right click and select "Wiktionary Search".
+_Note:_ In PDF files, the methods above do not work. You can instead highlight the word while the side panel is open, then right click and select _Wiktionary search_.
 
 ## Developer notes
 
