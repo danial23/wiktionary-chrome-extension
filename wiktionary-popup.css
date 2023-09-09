@@ -4,11 +4,12 @@
   position: absolute;
   overflow: auto;
   z-index: 2147483647;
+  direction: ltr;
   width: 320px;
   max-height: 180px;
   min-height: 90px;
   border-radius: 5px;
-  background: #f7f0ed;
+  background: #faf6f0;
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }
 #wiktionary-popup-contents {
@@ -35,6 +36,7 @@
 .wiktionary-popup-entry-text {
   font-weight: bold;
   font-size: 16pt;
+  line-height: 1em;
 }
 .wiktionary-popup-entry-pos {
 }
