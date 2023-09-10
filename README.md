@@ -8,22 +8,20 @@ Find the definition of any word on a webpage. Available in 162 languages.
 
 ## Usage
 
-- Open the side panel by clicking the extension icon (or by clicking the side panel icon and selecting "Wiktionary").
+[out.webm](https://github.com/danial23/wiktionary-chrome-extension/assets/5867710/8ac0ae10-0d3f-4016-b0d9-d95dd054033a)
+- Open the side panel by clicking the extension icon.
 
   **Note:** You need to enable the Side Panel feature in Chrome.
-
 - Once the side panel is open, search Wiktionary by highlighting a word.
-
 - To change the language of Wiktionary, right-click the extension icon and select _options_.
-
-**Popup Mode:** Toggle popup mode by pressing Alt+P, then highlight a word (by double-clicking or dragging) to see its definition(s) in a popup. Popup Mode is only available in English. You can change this shortcut on chrome://extensions/shortcuts
+- **Popup Mode:** Toggle popup mode by pressing Alt+P, then highlight a word (by double-clicking or dragging) to see its definition(s) in a popup. Popup Mode is only available in English. You can change this shortcut in chrome://extensions/shortcuts
 
 **Note:** In PDF files, the methods above do not work. Instead, while the side panel is open, highlight a word, right-click it and select _Wiktionary search_.
 
 ## Developer notes
 
-To test new features without having to toggle feature flags manually before/after every commit, enter the following command after a git clone: `git update-index --skip-worktree ./feature-flags.js`
+To test new features without having to toggle feature flags manually before/after every commit, enter the following command in project root after a git clone: `git update-index --skip-worktree ./extension/feature-flags.js`
 
-If you want to commit changes made to this file, do `git update-index --no-skip-worktree ./feature-flags.js`
+If you want to commit changes made to this file, do `git update-index --no-skip-worktree ./extension/feature-flags.js`
 
 You'll still get updates to this file coming in from upstream either way.
