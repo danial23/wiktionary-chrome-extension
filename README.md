@@ -8,9 +8,9 @@ Find the definition of any word on a webpage.
 
 ## Features
 
-- Search on highlight
-- Popup mode (English only)
-- Available in 162 languages
+- search on highlight
+- popup mode (English only)
+- available in 162 languages
 
 ## Usage
 
