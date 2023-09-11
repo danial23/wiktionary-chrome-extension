@@ -1,10 +1,16 @@
 # Wiktionary (Chrome extension)
 
-Find the definition of any word on a webpage. Available in 162 languages.
+Find the definition of any word on a webpage.
 
 [![Chrome](https://storage.googleapis.com/web-dev-uploads/image/WlD8wC6g8khYWPJUsQceQkhXSlv1/UV4C4ybeBTsZt43U4xis.png "Chrome")](https://chrome.google.com/webstore/detail/wiktionary/cgeoeehlcbijkefhlmcnoahlelccfndj)
 
 [or download via direct link](https://github.com/danial23/wiktionary-chrome-extension/releases/download/v0.3.1/wiktionary-chrome-extension.crx)
+
+## Features
+
+- Search on highlight
+- Popup mode (English only)
+- Available in 162 languages
 
 ## Usage
 
