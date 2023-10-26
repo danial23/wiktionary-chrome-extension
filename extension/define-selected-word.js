@@ -1,11 +1,10 @@
-let feature_flags;
-const popup_width = 320,
-  popup_height = 240; // change this in css as well
-let popupAbortController = null;
 const cooldownDuration = 500; // ms
 const maxCharacterCount = 100;
 
-let allowPopups = true; // set to true to disable popups
+let feature_flags;
+let popup = null;
+let popupAbortController = null;
+let allowPopups = true; // set to true to enable popups on current page
 
 (async () => {
   // get feature flags from service worker
@@ -20,17 +19,13 @@ async function get_popup_mode() {
   });
 }
 
-window.addEventListener("focus", updatePopupAndSearch);
-
-window.addEventListener("blur", () => {
-  chrome.runtime.sendMessage({
-    command: "search",
-    text: ""
+async function get_popup_fontsize() {
+  return new Promise((resolve) => {
+    chrome.runtime.sendMessage({ command: "get-popup-fontsize" }, resolve);
   });
-});
+}
 
 window.addEventListener("resize", () => {
-  const popup = document.getElementById("wiktionary-popup");
   if (popup) {
     setupPopupPosition(popup);
   }
@@ -133,8 +128,9 @@ async function showPopupWithCooldown(text) {
 async function showPopup(text, abortSignal) {
   popup = document.createElement("div");
   popup.setAttribute("id", "wiktionary-popup");
+  popup.style.fontSize = await get_popup_fontsize() + "pt";
 
-  const usages = await getPossibleDefinitions(text, abortSignal);
+  const usages = await getPossibleUsages(text, abortSignal);
   if (usages.length > 0 && !abortSignal.aborted) {
     popup.appendChild(popupContent(usages));
     document.getElementsByTagName("html")[0].append(popup);
@@ -142,7 +138,7 @@ async function showPopup(text, abortSignal) {
   }
 }
 
-async function sortByLangPrefs(usages) {
+async function sortResultsByLanguagePreferences(usages) {
   const doc_lang = document.documentElement.lang.split("-", 1)[0];
   const user_lang = window.navigator.language.split("-", 1)[0];
   const order_preference = [user_lang, "en", doc_lang]; // from least preferred to most
@@ -168,7 +164,10 @@ async function sortByLangPrefs(usages) {
   });
 }
 
-async function getPossibleDefinitions(text, abortSignal) {
+// returns a list of usages asynchroniously
+// includes usages for the lowercase variant
+// (TODO: make this smarter - context dependent?)
+async function getPossibleUsages(text, abortSignal) {
   const text_lowercase = text.toLowerCase();
   const requests = [fetchUsages(text, abortSignal)];
   if (text != text_lowercase) {
@@ -179,11 +178,13 @@ async function getPossibleDefinitions(text, abortSignal) {
     usages.push(...(await request));
   }
 
-  sortByLangPrefs(usages);
+  sortResultsByLanguagePreferences(usages);
 
   return usages;
 }
 
+// returns a list of usages for the given entry by contacting the api
+// low level function, doesn't do any sorting
 async function fetchUsages(entry, abortSignal) {
   const usages = [];
   const response = await fetch(
@@ -213,9 +214,15 @@ async function fetchUsages(entry, abortSignal) {
 }
 
 function removePopup() {
-  const popup = document.getElementById("wiktionary-popup");
   if (popup) {
-    document.getElementsByTagName("html")[0].removeChild(popup);
+    try {
+      document.getElementsByTagName("html")[0].removeChild(popup);
+    }
+    catch (e) {
+      // ignore
+      // this can happen if the popup is removed by the context menu
+    }
+    popup = null;
   }
 }
 
@@ -227,17 +234,17 @@ function setupPopupPosition(popup) {
   if (y < window.scrollY + 10) {
     y = window.scrollY + rect.bottom + 10;
   }
-  popup.setAttribute(
-    "style",
-    "top:" + Math.round(y) + "px; left:" + Math.round(x) + "px;"
-  );
+  popup.style.top = Math.round(y) + "px";
+  popup.style.left = Math.round(x) + "px";
 }
 
-// abandon all hope, ye who enter here
+// returns a div containing the contents of the popup
 function popupContent(usages) {
+  // abandon all hope, ye who enter here
   const container = document.createElement("div");
   container.setAttribute("id", "wiktionary-popup-contents");
 
+  // jk it's not that bad
   for (const usage of usages) {
     const usage_container = document.createElement("div");
     usage_container.setAttribute("class", "wiktionary-popup-usage");
@@ -272,9 +279,9 @@ function popupContent(usages) {
 
       let def_text = document.createElement("div");
       def_text.innerHTML = definition.definition;
-      cleanRecursive(def_text);
+      cleanup(def_text);
       if (!def_text.textContent || def_text.textContent.charAt(0) == "↑") {
-        // if the definition is empty or is a book reference, skip it
+        // if the definition is empty or is a book reference, skip it (dataset bugs)
         continue;
       }
       def_text.setAttribute("class", "wiktionary-popup-definition-text");
@@ -293,7 +300,7 @@ function popupContent(usages) {
 
           let example_text = document.createElement("div");
           example_text.innerHTML = example_html;
-          cleanRecursive(example_text);
+          cleanup(example_text);
           example_text.setAttribute("class", "wiktionary-popup-example-text");
           example.appendChild(example_text);
         }
@@ -304,10 +311,10 @@ function popupContent(usages) {
   return container;
 }
 
-// replaces all elements with spans
+// replaces all elements within elem with spans
 // removes ol and li elements (dataset bugs)
 // prunes empty elements
-function cleanRecursive(elem) {
+function cleanup(elem) {
   for (const child of elem.children) {
     if (
       child.nodeName == "OL" ||
@@ -318,7 +325,7 @@ function cleanRecursive(elem) {
       continue;
     }
 
-    cleanRecursive(child);
+    cleanup(child);
 
     let elem2 = document.createElement("span");
     switch (child.nodeName) {
@@ -334,7 +341,7 @@ function cleanRecursive(elem) {
             });
           } else {
             elem2.addEventListener("click", (_) => {
-              replacePopupWithNewDef(link);
+              navigateWithinPopup(link);
             });
           }
         }
@@ -367,8 +374,8 @@ function cleanRecursive(elem) {
   }
 }
 
-async function replacePopupWithNewDef(link) {
-  const popup = document.getElementById("wiktionary-popup");
+// navigate to a new definition within the popup
+async function navigateWithinPopup(link) {
   if (!popup) {
     return;
   }
@@ -376,7 +383,7 @@ async function replacePopupWithNewDef(link) {
   contents.setAttribute("style", "cursor: wait;");
 
   const usages = await fetchUsages(link.slice(6).replaceAll("_", " ").split("#")[0]); // removes "/wiki/" and "#..."
-  sortByLangPrefs(usages);
+  sortResultsByLanguagePreferences(usages);
 
   if (popup.firstElementChild) {
     popup.removeChild(popup.firstElementChild);

@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Wiktionary",
-  "description": "Search words on Wiktionary",
-  "version": "0.3.1",
+  "name": "Dictionary",
+  "description": "Search words on Wiktionary.org",
+  "version": "0.3.2",
   "minimum_chrome_version": "116",
   "icons": {
     "16": "icon16.png",
@@ -15,7 +15,7 @@
     "type": "module"
   },
   "action": {
-    "default_title": "Wiktionary"
+    "default_title": "Dictionary"
   },
   "options_ui": {
     "page": "options.html",

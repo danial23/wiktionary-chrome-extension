@@ -1,10 +1,11 @@
 import feature_flags from "./feature-flags.js";
-let popup_mode = false;
+let popup_mode = true;
+let popup_fontsize = 12;
 let language = "en";
 let lastSearch = "";
 
 chrome.storage.local.get("popup_mode", (result) => {
-  popup_mode = result ? result.popup_mode : false;
+  popup_mode = result ? result.popup_mode : true;
 });
 
 chrome.storage.local.get("language", (result) => {
@@ -15,6 +16,14 @@ chrome.storage.local.get("language", (result) => {
   }
 });
 
+chrome.storage.local.get("popup_fontsize", (result) => {
+  if (result && result.popup_fontsize) {
+    popup_fontsize = result.popup_fontsize;
+  } else {
+    chrome.storage.local.set({ popup_fontsize: 12 });
+  }
+});
+
 chrome.sidePanel
   .setPanelBehavior({ openPanelOnActionClick: true })
   .catch((error) => console.error(error));
@@ -22,7 +31,7 @@ chrome.sidePanel
 function setupContextMenu() {
   chrome.contextMenus.create({
     id: "wiktionary",
-    title: "Wiktionary search",
+    title: "Search on Wiktionary.org",
     contexts: ["selection"],
   });
 }
@@ -62,39 +71,38 @@ chrome.commands.onCommand.addListener(async (command) => {
 });
 
 chrome.runtime.onMessage.addListener((request, _, sendResponse) => {
-  if (request.command == "get-popup-mode") {
-    sendResponse(popup_mode);
-  }
-});
-
-chrome.runtime.onMessage.addListener((request, _, sendResponse) => {
-  if (request.command == "get-feature-flags") {
-    sendResponse(feature_flags);
-  }
-});
-
-chrome.runtime.onMessage.addListener((request, _, sendResponse) => {
-  if (request.command == "get-language") {
-    sendResponse(language);
-  }
-});
-
-chrome.runtime.onMessage.addListener((request) => {
-  if (request.command == "set-language") {
-    language = request.language;
-    chrome.storage.local.set({ language: language });
-  }
-});
-
-chrome.runtime.onMessage.addListener((request, _) => {
-  if (request.command == "search") {
-    lastSearch = request.text;
-  }
-});
-
-chrome.runtime.onMessage.addListener((request, _, sendResponse) => {
-  if (request.command == "get-last-search") {
-    sendResponse(lastSearch);
+  switch (request.command) {
+    case "get-feature-flags":
+      sendResponse(feature_flags);
+      break;
+    case "get-popup-mode":
+      sendResponse(popup_mode);
+      break;
+    case "set-popup-mode":
+      popup_mode = request.popup_mode;
+      chrome.storage.local.set({ popup_mode: popup_mode });
+      break;
+    case "get-language":
+      sendResponse(language);
+      break;
+    case "set-language":
+      language = request.language;
+      chrome.storage.local.set({ language: language });
+      break;
+    case "search":
+      lastSearch = request.text;
+      break;
+    case "get-last-search":
+      sendResponse(lastSearch);
+      break;
+    case "get-popup-fontsize":
+      sendResponse(popup_fontsize);
+      break;
+    case "set-popup-fontsize":
+      popup_fontsize = request.popup_fontsize;
+      chrome.storage.local.set({ popup_fontsize: popup_fontsize });
+      break;
+    default: throw new Error("Unknown command");
   }
 });
 

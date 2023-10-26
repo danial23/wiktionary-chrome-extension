@@ -5,9 +5,9 @@
   overflow: auto;
   z-index: 2147483647;
   direction: ltr;
-  width: 320px;
-  max-height: 180px;
-  min-height: 90px;
+  width: 21em;
+  max-height: 13em;
+  min-height: 7em;
   border-radius: 5px;
   background: #faf6f0;
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
@@ -18,23 +18,22 @@
   user-select: none;
   font-family: Georgia, serif;
   color: black;
-  font-size: 12pt;
+  font-size: inherit;
   padding-left: 1em;
   padding-right: 1em;
-  padding-top: 0.5em;
-  padding-bottom: 0.5em;
+  padding-top: 0;
+  padding-bottom: 0;
   overflow-wrap: break-word;
   hyphens: auto;
 }
 .wiktionary-popup-usage {
-  margin-top: 0.9em;
+  margin-top: 1.2em;
 }
 .wiktionary-popup-entry {
-  margin-top: 0.9em;
 }
 .wiktionary-popup-entry-text {
   font-weight: bold;
-  font-size: 16pt;
+  font-size: 1.4em;
   line-height: 1em;
 }
 .wiktionary-popup-entry-pos {
@@ -63,7 +62,7 @@
 }
 .wiktionary-popup-examples {
   list-style-type: none;
-  font-size: 11pt;
+  font-size: 0.95em;
   line-height: 1.3em;
   padding-left: 0.5em;
 }

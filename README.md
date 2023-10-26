@@ -1,15 +1,15 @@
-# Wiktionary (Chrome extension)
+# Dictionary (Chrome extension)
 
-Find the definition of any word on a webpage.
+Find the definition of any word on a webpage. Search on Wiktionary.org in 162 languages.
 
 [![Chrome](https://storage.googleapis.com/web-dev-uploads/image/WlD8wC6g8khYWPJUsQceQkhXSlv1/UV4C4ybeBTsZt43U4xis.png "Chrome")](https://chrome.google.com/webstore/detail/wiktionary/cgeoeehlcbijkefhlmcnoahlelccfndj)
 
-[or download via direct link](https://github.com/danial23/wiktionary-chrome-extension/releases/download/v0.3.1/wiktionary-chrome-extension.crx)
+[or download via direct link](https://github.com/danial23/wiktionary-chrome-extension/releases/download/v0.3.2/wiktionary-chrome-extension.crx)
 
 ## Features
 
 - search on highlight
-- popup mode (English only)
+- pop-up mode (English only)
 - available in 162 languages
 
 ## Usage
@@ -18,11 +18,11 @@ Find the definition of any word on a webpage.
 - Open the side panel by clicking the extension icon.
 
   **Note:** You need to enable the Side Panel feature in Chrome.
-- Once the side panel is open, search Wiktionary by highlighting a word.
+- Once the side panel is open, search Dictionary by highlighting a word.
 - To change the language of Wiktionary, right-click the extension icon and select _options_.
-- **Popup Mode:** Toggle popup mode by pressing Alt+P, then highlight a word (by double-clicking or dragging) to see its definition(s) in a popup. Popup Mode is only available in English. You can change this shortcut in chrome://extensions/shortcuts
+- **Pop-up Mode:** Highlight a word (by double-clicking or dragging) to see its definition(s) in a pop-up. Pop-up mode is only available in English. Alt + P toggles pop-up mode. You can change this shortcut in chrome://extensions/shortcuts
 
-**Note:** In PDF files, the methods above do not work. Instead, while the side panel is open, highlight a word, right-click it and select _Wiktionary search_.
+**Note:** In PDF files, the methods above do not work. Instead, while the side panel is open, highlight a word, right-click it and select _Search on Wiktionary.org_.
 
 ## Developer notes
 
