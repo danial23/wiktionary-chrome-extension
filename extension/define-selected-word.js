@@ -325,6 +325,10 @@ function cleanup(elem) {
       continue;
     }
 
+    if (child.nodeName == "math") {
+      continue;
+    }
+
     cleanup(child);
 
     let elem2 = document.createElement("span");
@@ -335,7 +339,18 @@ function cleanup(elem) {
         // we need to handle them differently
         const link = child.getAttribute("href");
         if (link.startsWith("/wiki/")) {
-          if (link.startsWith("/wiki/Template:")) {
+          if (link.startsWith("/wiki/Template:")
+            || link.startsWith("/wiki/Help:")
+            || link.startsWith("/wiki/Category:")
+            || link.startsWith("/wiki/Module:")
+            || link.startsWith("/wiki/Portal:")
+            || link.startsWith("/wiki/Appendix:")
+            || link.startsWith("/wiki/Reconstruction:")
+            || link.startsWith("/wiki/Citations:")
+            || link.startsWith("/wiki/Thread:")
+            || link.startsWith("/wiki/Topic:")
+            || link.startsWith("/wiki/WT:")
+            || link.startsWith("/wiki/Wiktionary:")) {
             elem2.addEventListener("click", (_) => {
               window.open("https://en.wiktionary.org" + link);
             });
@@ -364,6 +379,13 @@ function cleanup(elem) {
         break;
       case "SUP":
         elem2.setAttribute("class", "wiktionary-popup-sup");
+        break;
+      case "SPAN":
+        if (child.style.display === "inline-block" && child.style.width === "80px") {
+          elem2.style.backgroundColor = child.style.backgroundColor;
+          elem2.style.display = "inline-block";
+          elem2.style.width = "5em";
+        }
         break;
       default:
         break;
