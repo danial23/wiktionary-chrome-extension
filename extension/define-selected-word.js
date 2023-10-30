@@ -229,7 +229,7 @@ function removePopup() {
 function setupPopupPosition(popup) {
   const rect = window.getSelection().getRangeAt(0).getBoundingClientRect();
   x = window.scrollX + (rect.left + rect.right - popup.offsetWidth) / 2;
-  x = Math.max(10, Math.min(x, window.innerWidth - 10)); // clamp position to screen size
+  x = Math.max(10, Math.min(x, window.innerWidth - popup.offsetWidth - 10)); // clamp position to screen size
   y = window.scrollY + rect.top - popup.offsetHeight - 10;
   if (y < window.scrollY + 10) {
     y = window.scrollY + rect.bottom + 10;
