@@ -3,7 +3,7 @@
   "name": "Dictionary",
   "description": "Search words on Wiktionary.org",
   "version": "0.3.3",
-  "minimum_chrome_version": "116",
+  "minimum_chrome_version": "1",
   "icons": {
     "16": "icon16.png",
     "32": "icon32.png",
